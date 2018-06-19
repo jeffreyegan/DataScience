@@ -214,5 +214,125 @@ print(frances_palmer)
 comfy_shoes = orders[orders.shoe_type.isin(['clogs','boots','ballet flats'])]
 print(comfy_shoes)
 
+# Adding Columns
+
+import pandas as pd
+
+df = pd.DataFrame([
+  [1, '3 inch screw', 0.5, 0.75],
+  [2, '2 inch nail', 0.10, 0.25],
+  [3, 'hammer', 3.00, 5.50],
+  [4, 'screwdriver', 2.50, 3.00]
+],
+  columns=['Product ID', 'Description', 'Cost to Manufacture', 'Price']
+)
+
+# Add columns here
+df['Sold in Bulk?'] = ['Yes', 'Yes', 'No', 'No']
+print(df)
 
 
+import pandas as pd
+
+df = pd.DataFrame([
+  [1, '3 inch screw', 0.5, 0.75],
+  [2, '2 inch nail', 0.10, 0.25],
+  [3, 'hammer', 3.00, 5.50],
+  [4, 'screwdriver', 2.50, 3.00]
+],
+  columns=['Product ID', 'Description', 'Cost to Manufacture', 'Price']
+)
+
+# Add columns here
+df['Is taxed?'] = 'Yes'
+print(df)
+
+import pandas as pd
+
+df = pd.DataFrame([
+  [1, '3 inch screw', 0.5, 0.75],
+  [2, '2 inch nail', 0.10, 0.25],
+  [3, 'hammer', 3.00, 5.50],
+  [4, 'screwdriver', 2.50, 3.00]
+],
+  columns=['Product ID', 'Description', 'Cost to Manufacture', 'Price']
+)
+
+# Add columns here
+df['Revenue'] = df['Price'] - df['Cost to Manufacture']
+print(df)
+
+# Column Operations
+from string import lower
+import pandas as pd
+
+df = pd.DataFrame([
+  ['JOHN SMITH', 'john.smith@gmail.com'],
+  ['Jane Doe', 'jdoe@yahoo.com'],
+  ['joe schmo', 'joeschmo@hotmail.com']
+],
+columns=['Name', 'Email'])
+
+# Add columns here
+df['Lowercase Name'] = df['Name'].apply(lower)
+print(df)
+
+
+## Pandas with Lambda Functions
+import pandas as pd
+
+df = pd.read_csv('employees.csv')
+
+get_last_name = lambda name : name.split(' ')[-1]
+# Add columns here
+df['last_name'] = df.name.apply(lambda name : name.split(' ')[-1])
+print(df)
+
+
+
+
+## Applying Lambda to a Row
+import pandas as pd
+
+df = pd.read_csv('employees.csv')
+
+
+total_earned = lambda row : (row.hours_worked-40)*(1.5*row.hourly_wage) + 40 * row.hourly_wage if row.hours_worked > 40 else row.hours_worked * row.hourly_wage
+
+df['total_earned'] = df.apply(lambda row : (row.hours_worked-40)*(1.5*row.hourly_wage) + 40 * row.hourly_wage if row.hours_worked > 40 else row.hours_worked * row.hourly_wage, axis=1)
+
+print(df.head())
+
+
+## Rename Columns
+import pandas as pd
+
+df = pd.read_csv('imdb.csv')
+
+# Rename columns here
+df.columns = ['ID', 'Title', 'Category', 'Year Released', 'Rating']
+print(df)
+
+import pandas as pd
+
+df = pd.read_csv('imdb.csv')
+
+# Rename columns here
+df.rename(columns = { 'name' : 'movie_title'}, inplace = True)
+print(df)
+
+
+
+
+
+# Review Pandas
+import pandas as pd
+
+orders = pd.read_csv('shoefly.csv')
+
+
+orders['shoe_source'] = orders.shoe_material.apply(lambda shoe_material : 'animal' if shoe_material == 'leather' else 'vegan')
+
+orders['salutation'] = 'Dear '+ orders.gender.apply(lambda gender : 'Mr. ' if gender == 'male' else 'Ms. ') + orders.last_name
+
+print(orders.head(5))
