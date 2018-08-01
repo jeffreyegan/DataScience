@@ -1,0 +1,202 @@
+'''
+Project: Sample Size Determination with SQL
+Reading Time: About 2 minutes
+This project is totally optional; if you’re busy this week, you can skip it!
+
+For this project, you’ll be acting as a data analyst for Scoopon, a company that provides discounted coupons for ice cream cones at trendy ice cream shops around the city.
+
+Mike is a Product Manager for Scoopon and is working on a trial of a referral program. Right now, Scoopon users can refer their friends to Scoopon, but not very many of them choose to do this. Mike thinks that offering a small reward will lead more current Scoopon customers to refer their friends.
+
+Mike wants to create an A/B test where half of current customers will get no reward for referring a friend (control group) and half will get a $0.50 credit to Scoopon if they refer a friend (treatment group). He’s not sure how long he will need to run this test for in order to get good results.
+
+In this project, you’ll analyze Scoopon’s existing data using SQL in order to determine how large of a sample size Mike will need.
+
+Start working on your project whenever you are ready!
+'''
+
+
+'''
+A/B Testing for Scoopon
+For this project, you’ll be acting as a data analyst for Scoopon, a company that provides discounted coupons for ice cream cones at trendy ice cream shops around the city.
+
+Mike is a Product Manager for Scoopon and is working on a trial of a referral program. Right now, Scoopon users can refer their friends to Scoopon, but not very many of them choose to do this. Mike thinks that offering a small reward will lead more current Scoopon customers to refer their friends.
+
+Mike wants to create an A/B test where half of current customers will get no reward for referring a friend (control group) and half will get a $0.50 credit to Scoopon if they refer a friend (treatment group). He’s not sure how long he will need to run this test for in order to get good results.
+
+In this project, you’ll analyze Scoopon’s existing data in order to determine how large of a sample size Mike will need.
+
+1.
+In order to gather data for this project, we'll be using a SQL database.
+
+To your right, you'll see code for selecting the first 5 rows of the table users. Click run to see that table.
+
+2.
+Add a second query to display the first 5 rows of referrals.
+
+3.
+Add a third query to display the first 5 rows of scoopons.
+
+
+
+SELECT * FROM users LIMIT 5;
+SELECT * FROM referrals LIMIT 5;
+SELECT * FROM scoopons LIMIT 5;
+
+
+
+'''
+Arithmetic in SQL
+In order to complete this project, you'll need to use SQL to perform some basic arithmetic (specifically, division).
+
+We can perform simple arithmetic (addition, subtraction, multiplication, etc.) by using a SELECT statement without any FROM:
+
+SELECT 1 + 2;
+This will produce:
+
+1 + 2
+0	3
+We can also perform operations on other quantities. The following code will divide the total number of rows by 5.
+
+SELECT COUNT(*) / 5
+FROM users;
+If the table had 500 rows, then this code would return:
+
+COUNT(*) / 5
+0	100
+Instructions
+1.
+Divide the number of rows in referrals by 2.
+'''
+
+SELECT COUNT(*) / 2 FROM referrals;
+
+
+'''
+Determining a Baseline
+In order to decide on a sample size, we need to know three things:
+
+Baseline Conversion Rate - This is the current percent of Scoopon users who refer friends.
+Minimum Detectable Effect - How much of an increase in referrals we want to be able to detect
+Statistical Significance - How sure do we want to be of our numbers
+Let's start by calculating our baseline referral rate.
+
+What percent of users refer their friends?
+
+To answer this question, we're going to construct a more complex query than you've seen before: we'll be doing both a LEFT JOIN and a COUNT.
+
+Instructions
+1.
+We'll want to combine users with referrals using a LEFT JOIN, and divide the number of referrals by the number of users to get the percent of users with referrals.
+
+Fill in the ??? in the query to your right with table and column names.
+'''
+
+SELECT 1.0 * COUNT(referrals.referrer_id) / COUNT(users.id)
+FROM users
+LEFT JOIN referrals
+	ON users.id = referrals.referrer_id;
+
+
+'''
+Minimum Detectable Difference I
+It looks like our baseline referral rate is about 10%. We'll be using that number moving forward.
+
+Next, we need to determine the minimal detectable difference that we want for this study. In order to calculate this, we'll need to know:
+
+The current number of referrals per week
+The desired number of referrals per week that would make this test a success
+In order to define some success criteria, we have a quick chat with Mike. Mike tells us that for referral bonus program to be a viable product feature, it needs to generate an additional $100 per week (compared to the current referrals program). He also tells us that each Scoopon is worth about $1 of revenue.
+
+Instructions
+1.
+Start by calculating the total number of referrals that we got this week by counting the rows in the referrals table.
+
+2.
+In order to calculate the desired number of users, we're going to have to know how much revenue we're currently generating per week, and how many additional referrals we would need to increase our revenue by $100.
+
+Start by calculating how many Scoopons each user buys each week. This will help us determine the revenue per week, as well as the value of each referral.
+'''
+
+SELECT COUNT(*) FROM referrals;
+
+SELECT 1.0 * COUNT(scoopons.purchased_at) / COUNT(DISTINCT scoopons.user_id) FROM scoopons;
+
+
+'''
+Minimum Detectable Difference II
+We now know:
+
+There are currently 417 referrals per week
+Each new user will buy about 3.2 Scoopons per week.
+Each Scoopon is worth $1 of revenue (according to Mike)
+Our revenue goal is $100 more than our current revenue
+Instructions
+1.
+We're currently sending out 417 referrals and making an average of $3.20 off of each referral.
+
+Currently, how much revenue are we getting from referrals? Use Python as a calculator and save your answer to the variable current_revenue.
+
+2.
+Normal users are worth $3.20 per week, but for our experiment, we will be offering a $0.50 discount to each referrer.
+
+What is each referred user worth if we give a $0.50 incentive to the referrer? Save your answer to revenue_per_referred.
+
+3.
+How many referred users (who are worth less than normal users) would we need to reach our revenue goal? Save your answer as goal_referrals.
+
+Recall that our revenue goal is $100 more than current_revenue.
+
+
+4.
+What is the percent difference between our current number of referrals (417) and goal_referrals? Save your answer to the variable min_diff.
+
+Your answer should be a percent, not a decimal, so if the percent difference is 40%, then your answer should be min_diff = 40, not min_diff = 0.40.
+
+
+5.
+Print min_diff.
+'''
+
+import numpy as np
+
+current_revenue = 417 * 3.20
+
+revenue_per_referred = 3.2-0.5
+
+goal_referrals = (current_revenue + 100.0 ) / revenue_per_referred
+
+min_diff = 100.0 * (goal_referrals - 417) / 417
+
+print(min_diff)  # 27.4%
+
+
+
+
+'''
+Sample Size Determination
+We now know:
+
+Baseline Conversion Rate - 10%
+Minimum Detectable Effect - 27%
+Statistical Significance - 90% (this is the standard significance that we use for A/B Test)
+It's time to calculate our desired sample size.
+
+Instructions
+1.
+Use the sample size calculator on your far right to determine the number of samples needed. Save this number of a variable called sample_size.
+
+2.
+According to our tables, Scoopon gets about 4,170 users per week. How many weeks will we need to run this test for in order to get our desired sample size? Save your answer to the variable weeks_of_experiment.
+
+Remember that the sample size you calculated was for each group (control and variant).
+'''
+
+import numpy as np
+
+# from https://s3.amazonaws.com/codecademy-content/courses/learn-hypothesis-testing/a_b_sample_size/index.html
+sample_size = 2100
+
+weeks_of_experiment = 2.0 * sample_size / 4170
+#Remember to use float math by adding a . after one of the integers
+# Remember that you need enough samples for both the control and the experimental group (2100 * 2).
+
