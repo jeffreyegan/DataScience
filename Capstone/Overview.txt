@@ -1,0 +1,14 @@
+Introduction: Capstone Projects
+Reading Time: About 1 minute
+
+You’re almost done with Introduction to Data Analysis. Well done!
+
+Now, it’s time to combine everything that you learned into a final capstone project. You can choose exactly one of the following projects to submit. You'll have one week to complete your project, which should be plenty of time.
+
+Both projects will require you to complete and submit a presentation summarizing your analysis. Presentations will be graded by Codecademy expert advisors.
+Option 1: Musclehub A/B Test
+
+Help Musclehub, a fancy gym, analyze the results of their A/B test. This project will combine material from Matplotlib, Pandas, SQL, and SciPy. You will need to install Python and complete this project offline.
+Option 2: Biodiversity of the National Parks
+
+Analyze wildlife data from several National Parks. This project will combine material from Matplotlib, Pandas, SQL, and SciPy. You can complete this project either offline (by installing Python) or online by answering questions on Codecademy.com.
