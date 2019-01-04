@@ -90,3 +90,101 @@ But is there a way you really convey the power of pandas and Python over the dru
 Try to make some more interesting graphs to show your boss, and the world! You may need to clean the data even more to do it, or the cleaning you have already done may give you the ease of manipulation you've been searching for.
 
 '''
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as pyplt
+import codecademylib3_seaborn
+import glob
+
+states_files = glob.glob("states*.csv")
+df_list = []
+for filename in states_files:
+  data = pd.read_csv(filename)
+  df_list.append(data)
+us_census = pd.concat(df_list)
+
+#us_census = us_census.drop_duplicates()
+#print(us_census)
+#print(len(us_census))
+print(us_census.columns)  # Index(['Unnamed: 0', 'State', 'TotalPop', 'Hispanic', 'White', 'Black', 'Native', 'Asian', 'Pacific', 'Income', 'GenderPop'],
+
+# Drop Useless Column that prevents identification of duplicates
+us_census = us_census.drop(['Unnamed: 0'], axis=1)
+
+# Drop Duplicated States Data
+us_census = us_census.drop_duplicates()
+
+# Clean Income Data
+us_census.Income = us_census['Income'].replace('[\$,]', '', regex=True)
+us_census['Income'] = us_census['Income'].astype(float)
+
+# Clean Gender Data
+us_census['gender_split'] = us_census['GenderPop'].str.split("_")
+us_census['Men'] = us_census['gender_split'].str.get(0)
+us_census['Men'] = us_census['Men'].str[:-1]
+us_census['Women'] = us_census['gender_split'].str.get(1)
+us_census['Women'] = us_census['Women'].str[:-1]
+us_census = us_census.drop(['gender_split'], axis=1)
+us_census = us_census.drop(['GenderPop'], axis=1)
+us_census.Women = us_census['Men'].replace(r'', np.nan, regex=True)
+us_census.Women = us_census['Women'].replace(r'', np.nan, regex=True)
+us_census['Men'] = us_census['Men'].astype(float)
+us_census['Women'] = us_census['Women'].astype(float)
+
+us_census['Women'] = us_census['Women'].fillna(us_census['TotalPop']-us_census['Men'])
+
+print(us_census.head())
+
+
+f, ax1 =  pyplt.subplots()
+pyplt.scatter(100.0*us_census['Women']/us_census['TotalPop'], us_census['Income'], alpha=0.8)
+pyplt.xlabel('Percent Population of Women in Each State')
+pyplt.ylabel('Income')
+pyplt.show()
+
+us_census['Hispanic'] = us_census['Hispanic'].fillna(0.0)
+us_census['White'] = us_census['White'].fillna(0.0)
+us_census['Black'] = us_census['Black'].fillna(0.0)
+us_census['Native'] = us_census['Native'].fillna(0.0)
+us_census['Asian'] = us_census['Asian'].fillna(0.0)
+us_census['Pacific'] = us_census['Pacific'].fillna(0.0)
+
+
+us_census.Hispanic = us_census['Hispanic'].replace('[\%,]', '', regex=True)
+us_census.White = us_census['White'].replace('[\%,]', '', regex=True)
+us_census.Black = us_census['Black'].replace('[\%,]', '', regex=True)
+us_census.Native = us_census['Native'].replace('[\%,]', '', regex=True)
+us_census.Asian = us_census['Asian'].replace('[\%,]', '', regex=True)
+us_census.Pacific = us_census['Pacific'].replace('[\%,]', '', regex=True)
+
+us_census['Hispanic'] = us_census['Hispanic'].astype(float)
+us_census['White'] = us_census['White'].astype(float)
+us_census['Black'] = us_census['Black'].astype(float)
+us_census['Native'] = us_census['Native'].astype(float)
+us_census['Asian'] = us_census['Asian'].astype(float)
+us_census['Pacific'] = us_census['Pacific'].astype(float)
+
+f, ax2 =  pyplt.subplots()
+pyplt.hist(us_census['Hispanic'], bins=100)
+pyplt.title('Hispanic Population')
+pyplt.show()
+f, ax3 =  pyplt.subplots()
+pyplt.hist(us_census['White'], bins=100)
+pyplt.title('White Population')
+pyplt.show()
+f, ax4 =  pyplt.subplots()
+pyplt.hist(us_census['Black'], bins=100)
+pyplt.title('Black Population')
+pyplt.show()
+f, ax5 =  pyplt.subplots()
+pyplt.hist(us_census['Native'], bins=100)
+pyplt.title('Native Population')
+pyplt.show()
+f, ax6 =  pyplt.subplots()
+pyplt.hist(us_census['Asian'], bins=100)
+pyplt.title('Asian Population')
+pyplt.show()
+f, ax7 =  pyplt.subplots()
+pyplt.hist(us_census['Pacific'], bins=100)
+pyplt.title('Pacific Population')
+pyplt.show()
